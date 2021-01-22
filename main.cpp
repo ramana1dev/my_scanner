@@ -1,6 +1,6 @@
 #include <iostream>
-#include <opencv2\opencv.hpp>
-#include <opencv2\imgproc\imgproc.hpp>
+#include <opencv2/opencv.hpp>
+#include <opencv2/imgproc/imgproc.hpp>
 #include <algorithm>
 
 using namespace std;
@@ -88,18 +88,18 @@ bool x_sort(const Point2f & m1, const Point2f & m2)
     return m1.x < m2.x;
 }
 
-//È·¶¨ËÄ¸öµãµÄÖĞĞÄÏß
+//ç¡®å®šå››ä¸ªç‚¹çš„ä¸­å¿ƒçº¿
 void sortCorners(std::vector<cv::Point2f>& corners,
     cv::Point2f center)
 {
     std::vector<cv::Point2f> top, bot;
     vector<Point2f> backup = corners;
 
-    sort(corners, x_sort);  //×¢ÒâÏÈ°´xµÄ´óĞ¡¸ø4¸öµãÅÅĞò
+    sort(corners.begin() , corners.end() , x_sort);  //æ³¨æ„å…ˆæŒ‰xçš„å¤§å°ç»™4ä¸ªç‚¹æ’åº
 
     for (int i = 0; i < corners.size(); i++)
     {
-        if (corners[i].y < center.y && top.size() < 2)    //ÕâÀïµÄĞ¡ÓÚ2ÊÇÎªÁË±ÜÃâÈı¸ö¶¥µã¶¼ÔÚtopµÄÇé¿ö
+        if (corners[i].y < center.y && top.size() < 2)    //è¿™é‡Œçš„å°äº2æ˜¯ä¸ºäº†é¿å…ä¸‰ä¸ªé¡¶ç‚¹éƒ½åœ¨topçš„æƒ…å†µ
             top.push_back(corners[i]);
         else
             bot.push_back(corners[i]);
@@ -126,8 +126,8 @@ void sortCorners(std::vector<cv::Point2f>& corners,
     }
 }
 
-int g_dst_hight;  //×îÖÕÍ¼ÏñµÄ¸ß¶È
-int g_dst_width; //×îÖÕÍ¼ÏñµÄ¿í¶È
+int g_dst_hight;  //æœ€ç»ˆå›¾åƒçš„é«˜åº¦
+int g_dst_width; //æœ€ç»ˆå›¾åƒçš„å®½åº¦
 
 void CalcDstSize(const vector<cv::Point2f>& corners)
 {
@@ -149,27 +149,27 @@ int main()
     Mat bkup = src.clone();
 
     Mat img = src.clone();
-    cvtColor(img, img, CV_RGB2GRAY);   //¶şÖµ»¯
+    cvtColor(img, img, CV_RGB2GRAY);   //äºŒå€¼åŒ–
     imshow("gray", img);
     //equalizeHist(img, img);
     //imshow("equal", img);
-    GaussianBlur(img, img, Size(5, 5), 0, 0);  //¸ßË¹ÂË²¨
+    GaussianBlur(img, img, Size(5, 5), 0, 0);  //é«˜æ–¯æ»¤æ³¢
 
-    //»ñÈ¡×Ô¶¨ÒåºË
-    Mat element = getStructuringElement(MORPH_RECT, Size(3, 3)); //µÚÒ»¸ö²ÎÊıMORPH_RECT±íÊ¾¾ØĞÎµÄ¾í»ıºË£¬µ±È»»¹¿ÉÒÔÑ¡ÔñÍÖÔ²ĞÎµÄ¡¢½»²æĞÍµÄ
-    //ÅòÕÍ²Ù×÷
-    dilate(img, img, element);  //ÊµÏÖ¹ı³ÌÖĞ·¢ÏÖ£¬ÊÊµ±µÄÅòÕÍºÜÖØÒª
+    //è·å–è‡ªå®šä¹‰æ ¸
+    Mat element = getStructuringElement(MORPH_RECT, Size(3, 3)); //ç¬¬ä¸€ä¸ªå‚æ•°MORPH_RECTè¡¨ç¤ºçŸ©å½¢çš„å·ç§¯æ ¸ï¼Œå½“ç„¶è¿˜å¯ä»¥é€‰æ‹©æ¤­åœ†å½¢çš„ã€äº¤å‰å‹çš„
+    //è†¨èƒ€æ“ä½œ
+    dilate(img, img, element);  //å®ç°è¿‡ç¨‹ä¸­å‘ç°ï¼Œé€‚å½“çš„è†¨èƒ€å¾ˆé‡è¦
     imshow("dilate", img);
-    Canny(img, img, 30, 120, 3);   //±ßÔµÌáÈ¡
+    Canny(img, img, 30, 120, 3);   //è¾¹ç¼˜æå–
     imshow("get contour", img);
 
     vector<vector<Point> > contours;
     vector<vector<Point> > f_contours;
     std::vector<cv::Point> approx2;
-    //×¢ÒâµÚ5¸ö²ÎÊıÎªCV_RETR_EXTERNAL£¬Ö»¼ìË÷Íâ¿ò  
-    findContours(img, f_contours, CV_RETR_EXTERNAL, CV_CHAIN_APPROX_NONE); //ÕÒÂÖÀª
+    //æ³¨æ„ç¬¬5ä¸ªå‚æ•°ä¸ºCV_RETR_EXTERNALï¼Œåªæ£€ç´¢å¤–æ¡†  
+    findContours(img, f_contours, CV_RETR_EXTERNAL, CV_CHAIN_APPROX_NONE); //æ‰¾è½®å»“
 
-    //Çó³öÃæ»ı×î´óµÄÂÖÀª
+    //æ±‚å‡ºé¢ç§¯æœ€å¤§çš„è½®å»“
     int max_area = 0;
     int index;
     for (int i = 0; i < f_contours.size(); i++)
@@ -184,7 +184,7 @@ int main()
     }
     contours.push_back(f_contours[index]);
 
-    cout << contours.size() << endl;  //ÒòÎªÎÒĞ´µÄÊÇÕÒ³ö×îÍâ²ãÂÖÀª£¬ËùÒÔÀíÂÛÉÏÖ»ÓĞÒ»¸öÂÖÀª
+    cout << contours.size() << endl;  //å› ä¸ºæˆ‘å†™çš„æ˜¯æ‰¾å‡ºæœ€å¤–å±‚è½®å»“ï¼Œæ‰€ä»¥ç†è®ºä¸Šåªæœ‰ä¸€ä¸ªè½®å»“
 
     vector<Point> tmp = contours[0];
 
@@ -193,7 +193,7 @@ int main()
         cout << "line_type: " << line_type << endl;
         Mat black = img.clone();
         black.setTo(0);
-        drawContours(black, contours, 0, Scalar(255), line_type);  //×¢ÒâÏßµÄºñ¶È£¬²»ÒªÑ¡ÔñÌ«Ï¸µÄ
+        drawContours(black, contours, 0, Scalar(255), line_type);  //æ³¨æ„çº¿çš„åšåº¦ï¼Œä¸è¦é€‰æ‹©å¤ªç»†çš„
         imshow("show contour", black);
 
 
@@ -214,7 +214,7 @@ int main()
 
             cv::HoughLinesP(black, lines, 1, CV_PI / 180, para, 30, 10);
 
-            //¹ıÂË¾àÀëÌ«½üµÄÖ±Ïß
+            //è¿‡æ»¤è·ç¦»å¤ªè¿‘çš„ç›´çº¿
             std::set<int> ErasePt;
             for (int i = 0; i < lines.size(); i++)
             {
@@ -222,7 +222,7 @@ int main()
                 {
                     if (IsBadLine(abs(lines[i][0] - lines[j][0]), abs(lines[i][1] - lines[j][1])) && (IsBadLine(abs(lines[i][2] - lines[j][2]), abs(lines[i][3] - lines[j][3]))))
                     {
-                        ErasePt.insert(j);//½«¸Ã»µÏß¼ÓÈë¼¯ºÏ
+                        ErasePt.insert(j);//å°†è¯¥åçº¿åŠ å…¥é›†åˆ
                     }
                 }
             }
@@ -242,13 +242,13 @@ int main()
                 continue;
             }
 
-            //¼ÆËãÖ±ÏßµÄ½»µã£¬±£´æÔÚÍ¼Ïñ·¶Î§ÄÚµÄ²¿·Ö
+            //è®¡ç®—ç›´çº¿çš„äº¤ç‚¹ï¼Œä¿å­˜åœ¨å›¾åƒèŒƒå›´å†…çš„éƒ¨åˆ†
             for (int i = 0; i < lines.size(); i++)
             {
                 for (int j = i + 1; j < lines.size(); j++)
                 {
                     cv::Point2f pt = computeIntersect(lines[i], lines[j]);
-                    if (pt.x >= 0 && pt.y >= 0 && pt.x <= src.cols && pt.y <= src.rows)             //±£Ö¤½»µãÔÚÍ¼ÏñµÄ·¶Î§Ö®ÄÚ
+                    if (pt.x >= 0 && pt.y >= 0 && pt.x <= src.cols && pt.y <= src.rows)             //ä¿è¯äº¤ç‚¹åœ¨å›¾åƒçš„èŒƒå›´ä¹‹å†…
                         corners.push_back(pt);
                 }
             }
@@ -259,7 +259,7 @@ int main()
 #if 1
             bool IsGoodPoints = true;
 
-            //±£Ö¤µãÓëµãµÄ¾àÀë×ã¹»´óÒÔÅÅ³ı´íÎóµã
+            //ä¿è¯ç‚¹ä¸ç‚¹çš„è·ç¦»è¶³å¤Ÿå¤§ä»¥æ’é™¤é”™è¯¯ç‚¹
             for (int i = 0; i < corners.size(); i++)
             {
                 for (int j = i + 1; j < corners.size(); j++)
@@ -326,7 +326,7 @@ int main()
             imshow("find", bkup);
             cv::imshow("quadrilateral", quad);
 
-            /*Èç¹ûĞèÒª¶şÖµ»¯¾Í½âµô×¢ÊÍ°Ñ*/
+            /*å¦‚æœéœ€è¦äºŒå€¼åŒ–å°±è§£æ‰æ³¨é‡ŠæŠŠ*/
             /*
             Mat local,gray;
             cvtColor(quad, gray, CV_RGB2GRAY);
@@ -334,7 +334,7 @@ int main()
             int constValue = 10;
             adaptiveThreshold(gray, local, 255, CV_ADAPTIVE_THRESH_MEAN_C, CV_THRESH_BINARY, blockSize, constValue);
 
-            imshow("¶şÖµ»¯", local);
+            imshow("äºŒå€¼åŒ–", local);
 
             */
 
